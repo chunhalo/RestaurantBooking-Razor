@@ -1,0 +1,92 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.BookingPage.AdminEditBookingStatusModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+
+@{
+    if (Model.booking.bookingId !=0)
+    {
+        <h2>Edit Booking Request and Status</h2>
+        <form method="post" enctype="multipart/form-data" id="myForm">
+            <input type="hidden" asp-for="booking.bookingId" />
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.bookingId"></label>
+                <input class="form-control" asp-for="booking.bookingId" readonly />
+                <span asp-validation-for="booking.bookingId" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.res.Name"></label>
+                <input class="form-control" asp-for="booking.res.Name" readonly />
+                <span asp-validation-for="booking.res.Name" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.username"></label>
+                <input class="form-control" asp-for="booking.username" readonly />
+                <span asp-validation-for="booking.username" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label>Date:</label>
+                <input type="date" class="form-control" id="date" name="date" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.startDate"></label>
+                <input type="time" class="form-control" asp-for="booking.startDate" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.endDate"></label>
+                <input type="time" class="form-control" asp-for="booking.endDate" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.table.TableNo"></label>
+                <input class="form-control" asp-for="booking.table.TableNo" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.request"></label>
+                <input class="form-control" asp-for="booking.request" />
+                <span asp-validation-for="booking.request" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.status"></label>
+                @Html.DropDownListFor(model => model.booking.status, new SelectList(Model.bookingStatuses, "Id", "StatusName"), "==Choose a status==", new { @class = "form-control" })
+
+                <span asp-validation-for="booking.status" style="color:red"></span>
+            </div>
+            <div class="text-center panel-body">
+                <button type="button" class="btn btn-sm btn-primary" style="width:60px" onclick="window.location.href ='/BookingPage/AdminBooking';">Back</button>
+                <button type="submit" class="btn btn-sm btn-primary" value="Update" asp-page-handler="UpdateBooking">Update</button>
+
+            </div>
+
+
+
+        </form>
+        <label class="text-center" style="font-size:100%;color:red;">@Model.MessageKey</label>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+}
+@section scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+<script type="text/javascript">
+    var getMonth = parseInt('@Model.booking.startDate.ToString("MM")');
+    var getDate = parseInt('@Model.booking.startDate.ToString("dd")');
+    var getYear = parseInt('@Model.booking.startDate.ToString("yyyy")');
+
+
+    var ModelMonthDateYear = new Date();
+    if (getDate < 10) {
+        getDate = '0' + getDate
+    }
+    if (getMonth < 10) {
+        getMonth = '0' + getMonth
+    }
+    ModelMonthDateYear = getYear + '-' + getMonth + '-' + getDate;  
+    document.getElementById("date").setAttribute("value", ModelMonthDateYear)
+
+</script>

@@ -1,0 +1,84 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.RestaurantPage.ResHomeModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+@using RestaurantBooking_Razor.Model
+
+<div>
+    @if (Model.MessageKey != null)
+    {
+        <div class="alert alert-success">
+            <strong>@Model.MessageKey</strong>
+        </div>
+
+
+    }
+    <h1 class="display-4">Welcome To Restaurant Booking</h1>
+
+    @{
+       
+        if (Model.resList.Data.Count !=0)
+        {
+
+            <div class="list-group">
+                @for (int i = 0; i < Model.resList.Data.Count; i++) 
+                {
+                    <a asp-page="/BookingPage/IndividualBooking" asp-route-id="@Model.resList.Data[i].ResId" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <img src="https://localhost:44325/RestaurantImages/@Model.resList.Data[i].Image" alt="Image" width="130" height="130" />
+                        <div style="display:inline-block;margin-left:100px">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@Model.resList.Data[i].Name</h5>
+                            </div>
+                            @{
+                                var OperationStartdatetime = DateTime.Parse(Model.resList.Data[i].OperationStart);
+                                var OperationEnddatetime = DateTime.Parse(Model.resList.Data[i].OperationEnd);
+                                var getOperationStart = String.Format("{0:hh:mm:tt}", OperationStartdatetime);
+                                var getOperationEnd = String.Format("{0:hh:mm:tt}", OperationEnddatetime);
+                            }
+                            <p class="mb-1">
+                                Adress: @Model.resList.Data[i].Address <br />
+                                Phone:@Model.resList.Data[i].Phone<br />
+                                Operation Hour: @getOperationStart to @getOperationEnd
+                            </p>
+                        </div>
+                    </a>
+                    
+                }
+            </div>
+
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.resList.TotalPages; i++)
+                {
+
+                    if (Model.resList.PageNumber == i)
+                    {
+                        <li class="active"><a asp-page="ResHome" asp-route-GetPageNumber="@i">@i</a></li>
+
+                    }
+                    else
+                    {
+                        <li><a asp-page="ResHome" asp-route-GetPageNumber="@i">@i</a></li>
+                    }
+
+                }
+            </ul>
+
+
+        }
+        else if (Model.PageNumberWarning != null)
+        {
+            <label class="text-center" style="font-size:100%;color:blue;">@Model.PageNumberWarning</label>
+        }
+        else
+        {
+            <label class="text-center" style="font-size:200%;color:blue;">New restaurant booking Coming Soon</label>
+        }
+
+    }
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</div>

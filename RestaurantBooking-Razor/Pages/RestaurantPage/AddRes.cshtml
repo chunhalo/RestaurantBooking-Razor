@@ -1,0 +1,63 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.RestaurantPage.AddResModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+
+<h2>Add Restaurant</h2>
+<form method="post" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label asp-for="res.Name"></label>
+        <input class="form-control" asp-for="res.Name" />
+        <span asp-validation-for="res.Name" style="color:red"></span>
+        <label style="color:red">@ViewData["NameExist"]</label>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="res.Address"></label>
+        <input class="form-control" asp-for="res.Address" />
+        <span asp-validation-for="res.Address" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="res.Phone"></label>
+        <input class="form-control" asp-for="res.Phone" />
+        <span asp-validation-for="res.Phone" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="res.Description"></label>
+        <input class="form-control" asp-for="res.Description" />
+        <span asp-validation-for="res.Description" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="res.OperationStart"></label>(Operation Between Start Time and End time must be at least 3 hour)
+        <input type="time" class="form-control" asp-for="res.OperationStart" />
+        <span asp-validation-for="res.OperationStart" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="res.OperationEnd"></label>
+        <input type="time" class="form-control" asp-for="res.OperationEnd" />
+        <span asp-validation-for="res.OperationEnd" style="color:red"></span>
+        <label style="color:red">@ViewData["GreaterError"]</label>
+    </div>
+    <div class="form-group">
+
+        <article><b>Please upload an image of restaurant</b></article> <br />
+        @*<label asp-for="res.Image"></label><br />*@
+        <input type="file" asp-for="res.Image" />
+        <span asp-validation-for="res.Image" style="color:red"></span>
+    </div>
+
+
+    <div class="text-center panel-body">
+        <button type="submit" class="btn btn-sm btn-primary">Add</button>
+    </div>
+</form>
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

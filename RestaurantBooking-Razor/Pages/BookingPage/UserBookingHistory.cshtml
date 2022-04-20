@@ -1,0 +1,104 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.BookingPage.UserBookingHistoryModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+<h2>Booking History</h2>
+
+@if (Model.bookingList.Data.Count != 0)
+{
+    <table  class="table-borderless table-responsive" width="1100">
+
+
+        <tr>
+            <th>Booking Id</th>
+            <th>Restaurant Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Table No</th>
+            <th>Status</th>
+            <th>Request</th>
+            <th>Cancel</th>
+
+        </tr>
+
+        @for (int i = 0; i < Model.bookingList.Data.Count; i++)
+        {
+
+    <tr>
+        <td height="50" width="125">@Html.DisplayFor(model => model.bookingList.Data[i].bookingId)</td>
+        <td height="50" width="125">@Html.DisplayFor(model => model.bookingList.Data[i].resName)</td>
+        <td height="50" width="175">@Html.DisplayFor(model => model.bookingList.Data[i].startDate)</td>
+        <td height="50" width="175">@Html.DisplayFor(model => model.bookingList.Data[i].endDate)</td>
+        <td height="50" width="80">@Html.DisplayFor(model => model.bookingList.Data[i].tableNo)</td>
+        <td height="50" width="80">@Html.DisplayFor(model => model.bookingList.Data[i].status)</td>
+        <td height="50" width="175">@Html.DisplayFor(model => model.bookingList.Data[i].request)</td>
+        @if (@Model.bookingList.Data[i].status == "pending")
+        {
+            <td height="50" width="100"><input type="button" class="btn btn-primary" value="Cancel" id="@Model.bookingList.Data[i].bookingId" onclick="ClickCancel(this.id)" /></td>
+        }
+        else if (@Model.bookingList.Data[i].status == "confirm" && Model.bookingList.Data[i].startDate >= DateTime.Now.Date)
+        {
+            <td height="50" width="100"><input type="button" class="btn btn-primary" value="Cancel" id="@Model.bookingList.Data[i].bookingId" onclick="ClickCancel(this.id)" /></td>
+        }
+        @*<td><input type="button" class="btn btn-primary" value="Delete" onclick="if (confirm('Are you sure want delete this product')) window.location.href = '/ProductPage/DeleteProduct?id=@Model.productList.products[i].ProductId';"></td>*@
+
+    </tr>
+        }
+    </table>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.bookingList.TotalPages; i++)
+        {
+
+            if (Model.bookingList.PageNumber == i)
+            {
+                <li class="page-item active"><a asp-page="UserBookingHistory" asp-route-GetPageNumber="@i">@i</a></li>
+
+            }
+            else
+            {
+                <li class="page-item"><a asp-page="UserBookingHistory" asp-route-GetPageNumber="@i">@i</a></li>
+            }
+
+        }
+    </ul>
+}
+
+else if (Model.PageNumberWarning != null)
+{
+    <label class="text-center" style="font-size:100%;color:blue;">@Model.PageNumberWarning</label>
+}
+else
+{
+    <label class="text-center" style="font-size:100%;color:blue;">There is no booking yet</label>
+}
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function ClickCancel(id) {
+        var ask = window.confirm("Cancel this booking?");
+        if (ask) {
+            window.alert("This Booking has been cancelled.");
+            var getPageNumber = '@Request.Query["GetPageNumber"]';
+            if (getPageNumber != "") {
+                window.location.href = "/BookingPage/CancelBooking?id=" + id + "&GetPageNumber=" + getPageNumber;
+            }
+            else {
+                window.location.href = "/BookingPage/CancelBooking?id=" + id;
+            }
+
+            //window.location.href = "/BookingPage/SetConfirmDate?id=" + id+"&;
+
+        }
+    }
+</script>
+@section scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+

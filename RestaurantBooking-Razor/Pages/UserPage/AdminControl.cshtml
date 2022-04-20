@@ -1,0 +1,84 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.UserPage.AdminControlModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+
+@if (Model.MessageKey != null)
+{
+    <div class="alert alert-success">
+        <strong>@Model.MessageKey</strong>
+    </div>
+
+
+}
+<h2>Manage User</h2>
+@if (Model.getUsers.Data.Count != 0)
+{
+    <table style="width:100%">
+
+
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Roles</th>
+            <th>Status</th>
+            <th>Edit</th>
+
+        </tr>
+
+        @for (int i = 0; i < Model.getUsers.Data.Count; i++)
+        {
+
+            <tr>
+                <td height="50">@Html.DisplayFor(model => model.getUsers.Data[i].username)</td>
+                <td height="50">@Html.DisplayFor(model => model.getUsers.Data[i].email)</td>
+                <td height="50">@Html.DisplayFor(model => model.getUsers.Data[i].phoneNumber)</td>
+                <td height="50">
+                    @Html.DisplayFor(model => model.getUsers.Data[i].roles)
+
+                </td>
+                <td height="50">@Html.DisplayFor(model => model.getUsers.Data[i].status)</td>
+                <td height="50"><input type="button" class="btn btn-primary" value="Edit" onclick="window.location.href = '/UserPage/EditUser?username=@Model.getUsers.Data[i].username'" /></td>
+
+
+            </tr>
+
+
+        }
+    </table>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.getUsers.TotalPages; i++)
+        {
+
+            if (Model.getUsers.PageNumber == i)
+            {
+                <li class="active"><a asp-page="AdminControl" asp-route-GetPageNumber="@i">@i</a></li>
+
+            }
+            else
+            {
+                <li><a asp-page="AdminControl" asp-route-GetPageNumber="@i">@i</a></li>
+            }
+
+        }
+    </ul>
+}
+else if (Model.PageNumberWarning != null)
+{
+    <label class="text-center" style="font-size:100%;color:blue;">@Model.PageNumberWarning</label>
+}
+else
+{
+    <label class="text-center" style="font-size:200%;color:blue;">No user added yet</label>
+}
+
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

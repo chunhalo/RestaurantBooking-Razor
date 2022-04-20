@@ -1,0 +1,332 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.BookingPage.IndividualBookingModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    
+}
+
+@*<style>
+        td {
+            padding: 2px;
+        }
+    </style>*@
+@if (Model.CheckExist != null)
+{
+    <div class="alert alert-warning">
+        <strong>@Model.CheckExist</strong>
+    </div>
+
+
+}
+@{
+    if (Model.res.ResId != 0)
+    {
+        <form method="post" enctype="multipart/form-data">
+            @Html.HiddenFor(model => model.res.ResId)
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="https://localhost:44325/RestaurantImages/@Model.res.Image" alt="Image" width="200" height="200" />
+                </div>
+            </div>
+                <table class="table-responsive w-auto" width="100%" style="table-layout:fixed">
+                    <tr>
+                        <td width="20%"><label asp-for="res.Name"></label>:</td>
+                        <td width="80%" style="word-break: break-all">@Html.DisplayFor(model => model.res.Name)</td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="res.Description"></label>:</td>
+                        <td style="word-break: break-all">@Html.DisplayFor(model => model.res.Description)</td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="res.Address"></label>:</td>
+                        <td style="word-break: break-all">@Html.DisplayFor(model => model.res.Address)</td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="res.Phone"></label>:</td>
+                        <td style="word-break: break-all">@Html.DisplayFor(model => model.res.Phone)</td>
+                    </tr>
+
+                    <tr>
+                        <td><label>Operation Hour</label>:</td>
+
+                        <td>@Model.getOperationStart until @Model.getOperationEnd <br /><p>Booking only available from operation start time to end time/ 12AM if operation is until midnight </p></td>
+                        @*<td><p></p></td>*@
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <label>Select a date:</label>
+                            <input type="date" class="form-control-sm" id="date" name="date" onchange="dateSelected()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div id="time" style="visibility:hidden">
+                                <label>Select Time:</label>
+                                <input type="time" class="form-control-sm" id="starttime" name="starttime" min="@Model.res.OperationStart" max="@Model.res.OperationEnd" /> until
+                                <input type="time" class="form-control-sm" id="endtime" name="endtime" min="@Model.res.OperationStart" max="@Model.res.OperationEnd" />
+                                <p style="color:blue">The booking between Start and End Time must be at least 1 hour/60 minutes</p>
+                                <button type="button" id="fetchBtn" class="btn btn-info" onclick="checkAvailability()">Check availability</button>
+                                <label id="lbl"></label>
+                            </div>
+
+                            <label id="validation" style="visibility:hidden;"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div id="listavailable" style="visibility:hidden">
+                                <div class="container">
+                                    <h1>Available List</h1>
+                                    <ul id="list"></ul>
+                                    <label id="radiovalidation" style="visibility:hidden;"></label>
+                                    <label class="text-center" style="font-size:100%;color:red;">@Model.MessageKey</label>
+                                </div>
+
+                                <div class="text-center panel-body">
+                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return validateradio();">Book</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            
+            @*<div style="margin-left:210px;">
+                <div>
+                    <label>Select a date:</label>
+                    <input type="date" class="form-control-sm" id="date" name="date" onchange="dateSelected()" />
+
+                </div>*@
+
+
+
+                @*<div id="time" style="visibility:hidden">
+                    <label>Select Time:</label>
+                    <input type="time" class="form-control-sm" id="starttime" name="starttime" min="@Model.res.OperationStart" max="@Model.res.OperationEnd" /> until
+                    <input type="time" class="form-control-sm" id="endtime" name="endtime" min="@Model.res.OperationStart" max="@Model.res.OperationEnd" />
+                    <p style="color:blue">The booking between Start and End Time must be at least 1 hour/60 minutes</p>
+                    <button type="button" id="fetchBtn" class="btn btn-info" onclick="checkAvailability()">Check availability</button>
+                    <label id="lbl"></label>
+                </div>
+
+                <label id="validation" style="visibility:hidden;"></label>*@
+
+                
+
+
+            @*</div>*@
+            
+
+
+
+
+        </form>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+
+}
+<script type="text/javascript">
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1;
+    var mm2 = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+    var hours = today.getHours();
+
+
+
+    if (hours + 1 >= parseInt('@Model.res.OperationEnd')) {
+        dd=dd+1
+    }
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+
+    document.getElementById("date").setAttribute("min", today);
+    mm2 = mm2 + 2;
+    if (mm2 < 10) {
+        mm2 = '0' + mm2
+    }
+    maxDate = yyyy + '-' + mm2 + '-' + dd;
+    document.getElementById("date").setAttribute("max", maxDate);
+
+    ///if current time > operationend then show today date cannot be selected
+</script>
+<script type="text/javascript">
+
+    function validateradio() {
+        var radios = document.getElementsByName("flexRadioDefault");
+        let radiovalidation = document.getElementById("radiovalidation");
+        for (var i = 0, len = radios.length; i < len; i++) {
+            if (radios[i].checked) {
+                return true;
+            }
+        }
+        radiovalidation.setAttribute("style", "visibility: visible;color:red");
+        radiovalidation.innerHTML = `You must select one table to book`
+        return false;
+    }
+
+    function dateSelected() {
+
+        let time = document.getElementById("time");
+        time.setAttribute("style", "visibility: visible;");
+    }
+
+    function toDate(dStr, format) {
+        var now = new Date();
+        if (format == "h:m") {
+            now.setHours(dStr.substr(0, dStr.indexOf(":")));
+            now.setMinutes(dStr.substr(dStr.indexOf(":") + 1));
+            now.setSeconds(0);
+            return now;
+        } else
+            return "Invalid Format";
+    }
+    function checkAvailability() {
+       
+        starttime = $('#starttime').val();
+
+        endtime = $('#endtime').val();
+        date = $('#date').val();
+
+        var getstarttime = starttime.split(":");
+        var starttimehour = getstarttime[0];
+        if (starttimehour == '00') { starttimehour = 24 }
+        var starttimemin = getstarttime[1];
+
+
+        var getendtime = endtime.split(":");
+        var endtimehour = getendtime[0];
+        if (endtimehour == '00') { endtimehour = 24 }
+        var endtimemin = getendtime[1];
+
+        var comparestarttime = starttimehour + "." + starttimemin;
+        var compareendtime = endtimehour + "." + endtimemin;
+        var totalTime = compareendtime - comparestarttime;
+
+        var getOperationStart = '@Model.res.OperationStart'.split(":");
+        var OperationStartHour = parseInt(getOperationStart[0]);
+        var OperationStartMinute = getOperationStart[1];
+        var newformat = OperationStartHour >= 12 ? 'PM' : 'AM';
+        OperationStartHour = OperationStartHour % 12;
+        OperationStartHour = OperationStartHour ? OperationStartHour : 12;
+
+        OperationStartFormat = OperationStartHour + ':' + OperationStartMinute + ' ' + newformat;
+
+        var getOperationEnd = '@Model.res.OperationEnd'.split(":");
+        var OperationEndHour = parseInt(getOperationEnd[0]);
+        var OperationEndMinute = getOperationEnd[1];
+        var newformat = OperationEndHour >= 12 ? 'PM' : 'AM';
+        OperationEndHour = OperationEndHour % 12;
+        OperationEndHour = OperationEndHour ? OperationEndHour : 12;
+
+        OperationEndFormat = OperationEndHour + ':' + OperationEndMinute + ' ' + newformat;
+
+        @*var OperationStartdatetime = toDate('@Model.res.OperationStart',"h:m");
+        var OperationEnddatetime = toDate('@Model.res.OperationEnd', "h:m");
+        alert(OperationStartdatetime.getHours());
+        alert(OperationEnddatetime.getMinutes())*@
+
+
+
+
+        let validation = document.getElementById("validation");
+        let listavailable = document.getElementById("listavailable");
+        let list = document.getElementById("list");
+        if (starttime.length == 0 || endtime.length == 0) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `start time and end time must be filled`
+        }
+        else if (starttime > '@Model.res.OperationEnd' || starttime <'@Model.res.OperationStart' ) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `start time must be in between ` + OperationStartFormat + ` and ` + OperationEndFormat;
+            if (endtime > '@Model.res.OperationEnd' || endtime < '@Model.res.OperationStart') {
+                validation.innerHTML += `<br />end time must be in between` + OperationStartFormat + ` and ` + OperationEndFormat;
+            }
+        }
+        else if (endtime > '@Model.res.OperationEnd' || endtime < '@Model.res.OperationStart') {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+           validation.innerHTML += `<br />end time must be in between` + OperationStartFormat + ` and ` + OperationEndFormat;
+        }
+        else if (starttime > endtime) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `start time cannot be bigger than end time`
+        }
+        else if ((Math.abs(totalTime)) < 1) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `It must be at least 1 hour`
+        }
+        else {
+
+            validation.setAttribute("style", "visibility: hidden");
+            listavailable.setAttribute("style", "visibility: visible");
+            var xhttp = new XMLHttpRequest();
+            //xhttp.open("GET", "https://localhost:44325/api/Table/1", true);
+            var formData = new FormData();
+
+            xhttp.open("POST","https://localhost:44325/api/Table",true)
+            // xhttp.setRequestHeader("Content-Type", "application/form-data");
+            var starttimewithdate = date + ' ' + starttime;
+            var endtimewithdate = date + ' ' + endtime;
+
+            formData.append("resId", '@Model.res.ResId');
+            formData.append("startDate", starttimewithdate);
+            formData.append("endDate", endtimewithdate);
+            xhttp.send(formData);
+
+            xhttp.onreadystatechange = function () {
+                let list = document.getElementById("list");
+                list.innerHTML = ""
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(JSON.parse(xhttp.responseText.length));
+                    console.log(JSON.parse(xhttp.responseText));
+                    console.log(xhttp.responseText.length);
+                    console.log(xhttp.responseText);
+                    JSON.parse(this.responseText).forEach(function (data, index) {
+                            list.innerHTML += `<div class="form-check" id="radiochecked">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="`+ data.tableId + `" value="` + data.tableId + `" />
+                            <label class="form-check-label" for="data.tableId"> Table `+ data.tableNo + `-` +
+                                data.accommodate + ` people </label></div>`;
+
+                    });
+                }
+                if (xhttp.responseText.length == 2) {
+                    list.innerHTML = `<div style=color:red>No available for this time</div>`;
+                    validation.setAttribute("color:red");
+                } else {
+                    list.innerHTML += `<div>
+                    <label>Additional request(if any):</label>
+                    <textarea class="form-control" id="request" name="request" maxlength="200"></textarea>
+                </div>`;
+                }
+
+            };
+        }
+
+        //xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+
+        //response.setHeader("Access-Control-Allow-Origin", "*");
+        //XMLHttpRequest.setRequestHeader("Access-Control-Allow-Origin", "https://localhost:44325");
+
+    }
+</script>

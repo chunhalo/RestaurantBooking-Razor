@@ -1,0 +1,93 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.RestaurantPage.EditResModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+
+}
+
+@{
+    if (Model.res.ResId != 0)
+    {
+       
+        <div>
+             <h2 style="display:inline-block">Update Restaurant</h2>
+            <button style="margin-left:100px" type="submit" class="btn btn-warning" onclick="window.location.href = '/RestaurantPage/EditTable?id=@Model.res.ResId'";">Edit Table</button>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="res.Image"></label>
+                <br />
+                <img src="https://localhost:44325/RestaurantImages/@Model.res.Image" alt="Image" width="200" height="200" />
+            </div>
+            <input type="file" asp-for="GetImage" />
+            <input type="hidden" asp-for="res.ResId" />
+            <input type="hidden" asp-for="res.Image" />
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="res.Name"></label>
+                <input class="form-control" asp-for="res.Name" readonly />
+                <span asp-validation-for="res.Name" style="color:red"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="res.Address"></label>
+                <input class="form-control" asp-for="res.Address" />
+                <span asp-validation-for="res.Address" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="res.Phone"></label>
+                <input class="form-control" asp-for="res.Phone" />
+                <span asp-validation-for="res.Phone" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="res.Description"></label>
+                <input class="form-control" asp-for="res.Description" />
+                <span asp-validation-for="res.Description" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="res.OperationStart"></label>(Operation Between Start Time and End time must be at least 3 hour)
+                <input type="time" class="form-control" asp-for="res.OperationStart" />
+                <span asp-validation-for="res.OperationStart" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="res.OperationEnd"></label>
+                <input type="time" class="form-control" asp-for="res.OperationEnd" />
+                <span asp-validation-for="res.OperationEnd" style="color:red"></span>
+                <label style="color:red">@ViewData["GreaterError"]</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="res.Status"></label>
+                @if (Model.res.Status == 2)
+                {
+                    <input type="hidden" asp-for="res.Status" />
+
+                    @Html.DropDownListFor(model => model.res.Status, new SelectList(Model.ResAllStatus, "Id", "StatusName"), new { @class = "form-control", @disabled = "disabled" })
+
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.res.Status, new SelectList(Model.ResStatus, "Id", "StatusName"), new { @class = "form-control" })
+
+                }
+                <span asp-validation-for="res.Status" style="color:red"></span>
+            </div>
+            <div class="text-center panel-body">
+                <button type="button" class="btn btn-sm btn-primary" style="width:60px" onclick="window.location.href ='/RestaurantPage/AdminRes';">Back</button>
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </div>
+        </form>
+        <label class="text-center" style="font-size:100%;color:red;">@Model.MessageKey</label>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+}
+
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

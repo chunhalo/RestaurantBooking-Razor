@@ -1,0 +1,382 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.RestaurantPage.EditTableModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+@if (Model.TransferMessage != null)
+{
+    <div class="alert alert-success">
+        <strong>@Model.TransferMessage</strong>
+    </div>
+
+
+}
+@{
+    if (Model.res.ResId != 0)
+    {
+        <h2>Edit Restaurant Table</h2>
+
+
+        <h4>Restaurant Name:@Model.res.Name</h4>
+        @*<button class="btn btn-default" asp-page-handler="Add">Add</button>*@
+
+
+        <form method="post" enctype="multipart/form-data" id="myForm">
+            <input type="button" class="btn btn-primary" value="Add Table" onclick="AddTable()" />
+            <input type="hidden" asp-for="res.ResId" />
+            <label class="text-center" style="font-size:100%;color:red;">@Model.AmountWarning</label>
+
+            <table width="1100" id="table1">
+                <tr>
+                    <th>Table No</th>
+                    <th>Accomodate(Amount of people for current table)</th>
+                    <th>Delete</th>
+
+                </tr>
+                @for (int i = 0; i < Model.tableList.Count; i++)
+                {
+
+                    <tr id="@("tablerow_" + Model.tableList[i].TableNo)">
+                        <td><input class="form-control" asp-for="tableList[i].TableNo" readonly /></td>
+
+                        <td><input class="form-control" asp-for="tableList[i].Accommodate" /></td>
+                        <td><input type="button" class="btn btn-primary" value="Delete" id="@("tableList_"+ i + "__btn")" onclick="DeleteTable(@Model.tableList[i].TableId,@Model.tableList[i].TableNo,@i)" /></td>
+                        <td><input type="hidden" asp-for="tableList[i].TableId" /></td>
+                    </tr>
+                    <tr><td></td><td><span asp-validation-for="tableList[i].Accommodate" style="color:red"></span></td></tr>
+
+                }
+                
+                @*@if (Model.tableList.Count > Model.res.AmountSlot)
+        {
+            @for (int i = 0; i < Model.tableList.Count; i++)
+            {
+                <tr>
+                    <td><input class="form-control" asp-for="tableList[i].TableNo" readonly /></td>
+
+                    <td><input class="form-control" asp-for="tableList[i].Accommodate" /></td>
+                    <td><input type="button" class="btn btn-primary" value="Delete" id="@Model.tableList[i].TableId" onclick="DeleteTable(this.id,@Model.tableList[i].TableNo)" /></td>
+                    <td><input type="hidden" asp-for="tableList[i].TableId" /></td>
+                </tr>
+                <tr><td></td><td><span asp-validation-for="tableList[i].Accommodate" style="color:red"></span></td></tr>
+
+            }
+        }
+        else
+        {
+            @for (int i = 0; i < Model.res.AmountSlot; i++)
+            {
+
+                <tr>
+                    <td><input class="form-control" asp-for="tableList[i].TableNo" readonly /></td>
+
+                    <td><input class="form-control" asp-for="tableList[i].Accommodate" max="100" /></td>
+                    <td><input type="button" class="btn btn-primary" value="Delete" id="@Model.tableList[i].TableId" onclick="DeleteTable(this.id,@Model.tableList[i].TableNo)" /></td>
+                    <td><input type="hidden" asp-for="tableList[i].TableId" /></td>
+                </tr>
+                <tr><td></td><td><span asp-validation-for="tableList[i].Accommodate" style="color:red"></span></td></tr>
+            }
+        }*@
+
+            </table>
+            <input type="hidden" name="hiddenlist" id="hiddenlist" />
+            <div class="text-center panel-body">
+                <button type="button" class="btn btn-sm btn-primary" style="width:60px" onclick="window.location.href ='/RestaurantPage/AdminRes';">Back</button>
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </div>
+
+        </form>
+        <label class="text-center" style="font-size:100%;color:red;">@Model.MessageKey</label>
+        <br />
+        <label id="validation" style="visibility:hidden;"></label>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+}
+
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<script>
+    var myArray = [];
+    if (myArray.length == 0) {
+        @foreach (var d in Model.tableList)
+         {
+              if (d.Status != 2)
+              {
+                  @:var table = { "tableId":@d.TableId, "resId":@d.ResId, "accommodate":@d.Accommodate, "tableNo":@d.TableNo, "status": @d.Status }
+                  @:myArray.push(table);
+
+              }
+         }
+    }
+    console.log(myArray);
+    console.log(myArray.length);
+    if (myArray.length == 1) {
+        var getFirstTable = document.getElementById("tableList_0__btn");
+        getFirstTable.setAttribute("style", "visibility: hidden");
+    }
+
+
+    function DeleteTable(id, tableNo, GetCount) {
+
+
+       @*let validation = document.getElementById("validation");
+
+        if (tableNo <=@Model.res.AmountSlot) {
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `You are not allow to delete this table unless amount of table is less than ` + tableNo
+        }*@
+
+        if (confirm('Are you sure want delete this table')) {
+            $.ajax({
+                type: "POST",
+                url: "/RestaurantPage/EditTable?handler=Delete",
+                contentType: 'application/json',
+                data: JSON.stringify({ "jsonid": parseInt(id),"resId": parseInt(@Model.res.ResId)}),
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    var tr_id = `tablerow_` + tableNo;
+                    $('#' + tr_id + '').remove();
+
+                    for (var i = 0; i < myArray.length; i++) {
+
+
+                        if (myArray[i].tableNo == tableNo) {
+                            //$('#' + tr_id + '').css("display", "none");
+
+                            myArray.splice(i, 1);
+
+                        }
+                    }
+
+                    console.log(myArray.length);
+                    for (var i = GetCount; i < myArray.length; i++) {
+                        
+                        var check = 0;
+                        if (data.length != 0) {
+                            for (var j = 0; j < data.length; j++) {
+                                if (myArray[i].tableNo == data[j].tableNo) {
+                                    check = 1;
+                                    var countplus = parseInt(i) + 1;
+                                    var stringName = "tableList_" + countplus + "__TableNo";
+                                    var getName = document.getElementById(stringName);
+                                    var accommodateName = "tableList_" + countplus + "__Accommodate";
+                                    var getAccommodate = document.getElementById(accommodateName);
+                                    var TableIdName = "tableList_" + countplus + "__TableId";
+                                    var getTableID = document.getElementById(TableIdName);
+                                    var btnName = "tableList_" + countplus + "__btn";
+                                    var getBtn = document.getElementById(btnName);
+
+                                    getBtn.id = "tableList_" + i + "__btn";
+                                    getName.id = "tableList_" + i + "__TableNo";
+                                    getName.setAttribute("name", "tableList[" + i + "].TableNo");
+                                    getAccommodate.id = "tableList_" + i + "__Accommodate";
+                                    getAccommodate.setAttribute("name", "tableList[" + i + "].Accommodate");
+                                    getTableID.id = "tableList_" + i + "__TableId";
+                                    getTableID.setAttribute("name", "tableList[" + i + "].TableId");
+
+                                    getBtn.setAttribute("onclick", "DeleteTable(" + data[j].tableId + "," + data[j].tableNo + "," + i + ")")
+                                }
+                            }
+                        }
+                        if (check != 1) {
+                            var countplus = parseInt(i) + 1;
+                            var stringName = "tableList_" + countplus + "__TableNo";
+                            var getName = document.getElementById(stringName);
+                            var accommodateName = "tableList_" + countplus + "__Accommodate";
+                            var getAccommodate = document.getElementById(accommodateName);
+                            var TableIdName = "tableList_" + countplus + "__TableId";
+                            var getTableID = document.getElementById(TableIdName);
+                            var btnName = "tableList_" + countplus + "__btn";
+                            var getBtn = document.getElementById(btnName);
+
+                            var getTableNo = $('#tableList_' + countplus + '__TableNo').val();
+                            getBtn.id = "tableList_" + i + "__btn";
+                            getName.id = "tableList_" + i + "__TableNo";
+                            getName.setAttribute("name", "tableList[" + i + "].TableNo");
+                            getAccommodate.id = "tableList_" + i + "__Accommodate";
+                            getAccommodate.setAttribute("name", "tableList[" + i + "].Accommodate");
+                            getTableID.id = "tableList_" + i + "__TableId";
+                            getTableID.setAttribute("name", "tableList[" + i + "].TableId");
+
+
+                            getBtn.setAttribute("onclick", "DeleteCreatedTable('tablerow_" + getTableNo + "'," + getTableNo + "," + i + ")")
+                        }
+
+                    }
+                    if (myArray.length == 1) {
+                        var getFirstTable = document.getElementById("tableList_0__btn");
+                        getFirstTable.setAttribute("style", "visibility: hidden");
+                    }
+                    else {
+                        var getFirstTable = document.getElementById("tableList_0__btn");
+                        getFirstTable.setAttribute("style", "visibility: visible");
+                    }
+
+
+                }
+            });
+            //window.location.href = '/RestaurantPage/DeleteTable?id=' + id + '&resId=' +@Model.res.ResId;
+
+        }
+
+
+
+    }
+
+    function DeleteCreatedTable(tr_id, tableNo, GetCount) {
+
+        if (confirm('Are you sure want delete this table')) {
+            $('#' + tr_id + '').remove();
+            //console.log(tr_id);
+            //var stringrowId = "" + tr_id;
+            //var rowId = document.getElementById(stringrowId);
+            //rowId.remove();
+            //$('#' + tr_id + '').css("display", "none");
+            for (var i = 0; i < myArray.length; i++) {
+
+                if (myArray[i].tableNo == tableNo) {
+
+                    myArray.splice(i, 1);
+
+                }
+            }
+
+            console.log(myArray.length);
+            for (var i = GetCount; i < myArray.length; i++) {
+
+                var countplus = parseInt(i) + 1;
+                var stringName = "tableList_" + countplus + "__TableNo";
+                var getName = document.getElementById(stringName);
+                var accommodateName = "tableList_" + countplus + "__Accommodate";
+                var TableIdName = "tableList_" + countplus + "__TableId";
+                var getAccommodate = document.getElementById(accommodateName);
+                var getTableID = document.getElementById(TableIdName);
+                var btnName = "tableList_" + countplus + "__btn";
+                var getBtn = document.getElementById(btnName);
+                var getTableNo = $('#tableList_' + countplus + '__TableNo').val();
+
+                getBtn.id = "tableList_" + i + "__btn";
+                getName.id = "tableList_" + i + "__TableNo";
+                getName.setAttribute("name", "tableList[" + i + "].TableNo");
+                getAccommodate.id = "tableList_" + i + "__Accommodate";
+                getAccommodate.setAttribute("name", "tableList[" + i + "].Accommodate");
+                getTableID.id = "tableList_" + i + "__TableId";
+                getTableID.setAttribute("name", "tableList[" + i + "].TableId");
+                getBtn.setAttribute("onclick", "DeleteCreatedTable('tablerow_" + getTableNo + "'," + getTableNo + "," + i + ")")
+
+                //var countplus = parseInt(i) + 1;
+                //var stringName = "tableList_" + countplus + "__TableNo";
+
+                //var getName = document.getElementById(stringName);
+
+                //var accommodateName = "tableList_" + countplus + "__Accommodate";
+                //var getAccommodate = document.getElementById(accommodateName);
+
+
+                //getName.setAttribute("name", "tableList["+i+"].TableNo");
+                //getAccommodate.setAttribute("name", "tableList["+i+"].Accommodate");
+            }
+
+            if (myArray.length == 1) {
+                var getFirstTable = document.getElementById("tableList_0__btn");
+                getFirstTable.setAttribute("style", "visibility: hidden");
+            }
+            else {
+                var getFirstTable = document.getElementById("tableList_0__btn");
+                getFirstTable.setAttribute("style", "visibility: visible");
+            }
+        }
+
+
+
+    }
+        
+
+
+
+
+        //table_row = document.getElementById(tr_id);
+        //console.log(table_row);
+        //table_row.remove();
+
+    
+
+    function AddTable() {
+
+
+
+        @*if (myArray.length == 0) {
+            @foreach (var d in Model.tableList)
+            {
+                if (d.Status != 2) {
+                    @:var table = { "tableId":@d.TableId, "tableNo":@d.TableNo, "accommodate":@d.Accommodate}
+                    @:myArray.push(table);
+
+                }
+            }
+        }*@
+
+        myArray.sort(function (a, b) {
+            return a.tableNo - b.tableNo
+        });
+
+
+
+        $.ajax({
+            type: "POST",
+            url: "/RestaurantPage/EditTable?handler=Add",
+            contentType: 'application/json',
+            data: JSON.stringify({"TableList": myArray, "resId": parseInt(@Model.res.ResId)}),
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (response) {
+                //if (response.status == 2) {
+                //    var tr_id = `tablerow_` + tableNo;
+                //    $('#' + tr_id + '').css("display", "block");
+                //}
+                var count = myArray.length;
+                myArray.push(response);
+                if (myArray.length > 1) {
+                    var getFirstTable = document.getElementById("tableList_0__btn");
+                    getFirstTable.setAttribute("style", "visibility: visible");
+                }
+
+
+                var abc = `<tr id = "tablerow_` + response.tableNo + `">
+                       <td><input class="form-control" id="tableList_`+ count + `__TableNo" name="tableList[`+ count + `].TableNo" value=` + response.tableNo + ` readonly /></td >
+                        <td><input class="form-control input-validation-error" type="number" data-val="true" data-val-range="Accomodate must be between 1 to 99" data-val-range-max="99"
+                            data-val-range-min="1" data-val-required="The Accommodate field is required." id="tableList_`+ count + `__Accommodate" name="tableList[` + count + `].Accommodate" 
+                            value= ` + response.accommodate + ` aria-describedby="tableList_` + count + `__Accommodate-error" aria-invalid="true"/></td >
+                        <td><input type="button" id="tableList_`+ count + `__btn" class="btn btn-primary" value="Delete"  onclick =  "DeleteCreatedTable(\'tablerow_` + response.tableNo + `\',\'` + response.tableNo+`\',\'`+count+`\')"  /></td>
+                        <td><input type="hidden" id="tableList_`+ count + `__TableId" name="tableList[` + count + `].TableId" value= ` + response.tableId + ` /></td>
+                    </tr>`
+                   
+                    
+
+
+                 $('#table1').append(abc);
+
+            }
+        });
+
+
+    }
+
+
+</script>

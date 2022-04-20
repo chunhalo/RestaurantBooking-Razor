@@ -1,0 +1,41 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.LoginPage.LoginModel
+@{
+    Layout = "../Shared/LoginLayout.cshtml";
+}
+
+@if (Model.alertMessage != null)
+{
+    <div class="alert alert-success">
+        <strong>@Model.alertMessage</strong>
+    </div>
+
+
+}
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="model.Username"></label>
+        <input class="form-control" asp-for="model.Username" />
+        <span asp-validation-for="model.Username" style="color:red"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="model.Password"></label>
+        <input type="password" class="form-control" asp-for="model.Password" />
+        <span asp-validation-for="model.Password" style="color:red"></span>
+    </div>
+    <div class="text-center panel-body">
+        <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+    </div>
+    <a href="LoginPage/ForgetPassword" class="text-small forgot-password text-black">Forgot Password</a>
+    <br />
+    <label style="color:red">@Model.MessageKey</label>
+
+
+</form>
+@section scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

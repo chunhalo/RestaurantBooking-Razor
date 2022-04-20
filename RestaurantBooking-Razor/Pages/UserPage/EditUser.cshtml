@@ -1,0 +1,60 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.UserPage.EditUserModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+@{
+
+    if (Model.getUsers != null)
+    {
+        <h2>Update User</h2>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group-row" style="margin-top:10px">
+                <label asp-for="getUsers.username"></label>
+                <br />
+                <input class="form-control" asp-for="getUsers.username" readonly />
+                <span asp-validation-for="getUsers.username" style="color:red"></span>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="getUsers.email"></label>
+                <input class="form-control" asp-for="getUsers.email" />
+                <span asp-validation-for="getUsers.email" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="getUsers.phoneNumber"></label>
+                <input class="form-control" asp-for="getUsers.phoneNumber" />
+                <span asp-validation-for="getUsers.phoneNumber" style="color:red"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="getUsers.status"></label>
+                @Html.DropDownListFor(model => model.getUsers.status, new List<SelectListItem>{
+                    new SelectListItem() {Text = "lockedout", Value="lockedout"},
+                    new SelectListItem() {Text = "active", Value="active"}
+           }, new { @class = "form-control" })
+                <span asp-validation-for="getUsers.status" style="color:red"></span>
+            </div>
+            <div class="text-center panel-body">
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+}
+
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+

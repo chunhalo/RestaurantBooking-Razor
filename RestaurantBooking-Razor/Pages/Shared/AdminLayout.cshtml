@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - testingpage</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/BookingPage/PendingBooking">Restaurant</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+
+                    <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="#" role="button" aria-expanded="true">Booking</a>
+                <ul class="dropdown-menu">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/PendingBooking">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/AdminBooking">Edit Booking</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/ValidateBooking">Validate Booking</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="#" role="button" aria-expanded="true">User</a>
+                <ul class="dropdown-menu">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/AdminControl">Manage User</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/LoginPage/RegisterAdmin">Register Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/ChangePassword">Change Password</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/RestaurantPage/AdminRes">Edit Restaurant</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/AnnouncePage/AnnouncementHome">Announcement</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/LoginPage/Logout">Logout</a>
+            </li>
+        </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <!--<ul class="navbar-nav flex-grow-1">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Booking</a>
+        <ul class="dropdown-menu">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/PendingBooking">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/AdminBooking">Edit Booking</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/ValidateBooking">Validate Booking</a>
+            </li>
+        </ul>
+    </li>
+                        @*<li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/PendingBooking">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/AdminBooking">Edit Booking</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/BookingPage/ValidateBooking">Validate Booking</a>
+        </li>*@
+                        <!--<li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">User</a>
+        <ul class="dropdown-menu">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/AdminControl">Manage User</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/LoginPage/RegisterAdmin">Register Admin</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/ChangePassword">Change Password</a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-page="/RestaurantPage/AdminRes">Edit Restaurant</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-page="/AnnouncePage/AnnouncementHome">Announcement</a>
+    </li>-->
+                        @*<li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/AdminControl">Manage User</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/LoginPage/RegisterAdmin">Register Admin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/UserPage/ChangePassword">Change Password</a>
+        </li>*@
+                        <!--<li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/LoginPage/Logout">Logout</a>
+        </li>
+
+    </ul>-->
+</div>
+        </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            &copy; 2021 - RestaurantBooking - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

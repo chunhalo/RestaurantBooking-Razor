@@ -1,0 +1,111 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.RestaurantPage.AdminResModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+<style>
+    th {
+        text-align: center;
+    }
+    .hiddenRow{
+        padding:0;
+    }
+</style>
+<div class="text-center">
+    @if (Model.MessageKey != null)
+    {
+        <div class="alert alert-success">
+            <strong>@Model.MessageKey</strong>
+        </div>
+
+
+    }
+    <h1 class="display-4">Admin Page</h1>
+    <div class="text-left" style="margin-left:80px">
+        <button type="submit" class="btn btn-warning" onclick="window.location.href ='/RestaurantPage/AddRes';">Create New Restaurant</button>
+    </div>
+    @{
+        if (Model.resList.Data.Count != 0)
+        {
+        <table class="table-responsive" width="100%" style="table-layout:fixed">
+            <tr>
+                <th width="10%" style="text-align:center">Image</th>
+                <th width="10%" style="text-align:center">Restaurant Name</th>
+                <th width="10%" style="text-align:center">Operation Hour</th>
+                <th width="10%" style="text-align:center">Status</th>
+                <th width="10%" style="text-align:center">Edit</th>
+
+            </tr>
+
+            @for (int i = 0; i < Model.resList.Data.Count; i++)
+            {
+                <tr data-toggle="collapse" data-target="#@i" class="accordion-toggle" style="border-top:solid">
+                    <td width="300">
+                        <img src="https://localhost:44325/RestaurantImages/@Model.resList.Data[i].Image" alt="Image" style="width:120px;height:100px;" />
+                    </td>
+                    <td width="250">@Html.DisplayFor(model => model.resList.Data[i].Name)</td>
+                    
+                    @{
+                        var OperationStartdatetime = DateTime.Parse(Model.resList.Data[i].OperationStart);
+                        var OperationEnddatetime = DateTime.Parse(Model.resList.Data[i].OperationEnd);
+                        var getOperationStart = String.Format("{0:hh:mm:tt}", OperationStartdatetime);
+                        var getOperationEnd = String.Format("{0:hh:mm:tt}", OperationEnddatetime);
+                    }
+                    <td width="250">@getOperationStart - @getOperationEnd</td>
+                    <td width="150">@Html.DisplayFor(model => model.resList.Data[i].restaurantStatus.StatusName)</td>
+                    <td width="150"><input type="button" class="btn btn-primary" value="Edit" onclick="window.location.href = '/RestaurantPage/EditRes?id=@Model.resList.Data[i].ResId'" /></td>
+                    
+                    @*<td><input type="button" class="btn btn-primary" value="Delete" onclick="if (confirm('Are you sure want delete this product')) window.location.href = '/ProductPage/DeleteProduct?id=@Model.productList.products[i].ProductId';"></td>*@
+                </tr>
+                <tr>
+                    <td colspan="3" width="100%" class="hiddenRow"><div class="accordian-body collapse" id="@i" style="text-align:left;word-break: break-all"> Address: @Html.DisplayFor(model => model.resList.Data[i].Address) <br />
+                          Phone: @Html.DisplayFor(model => model.resList.Data[i].Phone) <br />
+                          Description: @Html.DisplayFor(model => model.resList.Data[i].Description)
+                          </div> </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            }
+        </table>
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.resList.TotalPages; i++)
+                {
+
+                    if (Model.resList.PageNumber == i)
+                    {
+                        <li class="active"><a asp-page="AdminRes" asp-route-GetPageNumber="@i">@i</a></li>
+
+                    }
+                    else
+                    {
+                        <li><a asp-page="AdminRes" asp-route-GetPageNumber="@i">@i</a></li>
+                    }
+
+                }
+            </ul>
+
+
+        }
+        else if (Model.PageNumberWarning != null)
+        {
+            <label class="text-center" style="font-size:100%;color:blue;">@Model.PageNumberWarning</label>
+        }
+        else
+        {
+            <label class="text-center" style="font-size:200%;color:blue;">New product Coming Soon</label>
+        }
+    }
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</div>
+
+<script>
+    $('.accordian-body').on('bs.collapse', function () {
+        $(this).closest("table")
+            .find(".collapse.in")
+            .not(this)
+            .collapse('toggle')
+    })
+</script>

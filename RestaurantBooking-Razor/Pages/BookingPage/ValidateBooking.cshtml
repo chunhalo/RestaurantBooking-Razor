@@ -1,0 +1,181 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.BookingPage.ValidateBookingModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+
+<style>
+    .hiddenRow {
+        padding: 0;
+    }
+</style>
+@if (Model.MessageKey != null)
+{
+    <div class="alert alert-success">
+        <strong>@Model.MessageKey</strong>
+    </div>
+}
+@if (Model.WarningMessage != null)
+{
+    <div class="alert alert-warning">
+        <strong>@Model.WarningMessage</strong>
+    </div>
+}
+<h2>Validate Booking</h2>
+<form method="post" enctype="multipart/form-data">
+
+    <div class="text-center panel-body">
+        <label style="display:inline-block">Search:</label>
+        <input type="text" asp-for="searchtext" style="display:inline-block" />
+
+        <div class="form-check form-check-inline" id="radiochecked">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="bookId" value="bookId" checked />
+            <label class="form-check-label" for="BookId">
+                Booking Id
+            </label>
+        </div>
+        <div class="form-check form-check-inline" id="radiochecked">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="username" value="username" />
+            <label class="form-check-label" for="username">
+                Username
+            </label>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-sm btn-primary" style="display:inline-block;margin-left:20px">Search</button>
+        <span asp-validation-for="searchtext" style="color:red;display:block"></span>
+
+    </div>
+</form>
+
+@if (Model.bookingList.Data.Count != 0)
+{
+<table width="1100" class="table-borderless table-responsive">
+
+    <tr>
+        <th>Booking Id</th>
+        <th>Restaurant Name</th>
+        <th>User</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Status</th>
+        <th>Validate</th>
+
+    </tr>
+
+    @for (int i = 0; i < Model.bookingList.Data.Count; i++)
+    {
+
+        <tr data-toggle="collapse" data-target="#@i" class="accordion-toggle" style="border-top:solid">
+            <td height="50" width="125">@Html.DisplayFor(model => model.bookingList.Data[i].bookingId)</td>
+            <td height="50" width="125">@Html.DisplayFor(model => model.bookingList.Data[i].resName)</td>
+            <td height="50" width="100">@Html.DisplayFor(model => model.bookingList.Data[i].username)</td>
+            <td height="50" width="175">@Html.DisplayFor(model => model.bookingList.Data[i].startDate)</td>
+            <td height="50" width="175">@Html.DisplayFor(model => model.bookingList.Data[i].endDate)</td>
+
+            <td height="50" width="80">@Html.DisplayFor(model => model.bookingList.Data[i].status)</td>
+
+            @if (@Model.bookingList.Data[i].status == "confirm" && Model.bookingList.Data[i].startDate >= DateTime.Now.Date)
+            {
+                <td height="50" width="100"><input type="button" class="btn btn-primary" value="Validate" id="@Model.bookingList.Data[i].bookingId" onclick="ClickValidate(this.id)" /></td>
+            }
+            else
+            {
+                <td></td>
+            }
+            @*<td><input type="button" class="btn btn-primary" value="Delete" onclick="if (confirm('Are you sure want delete this product')) window.location.href = '/ProductPage/DeleteProduct?id=@Model.productList.products[i].ProductId';"></td>*@
+
+        </tr>
+        <tr>
+            <td colspan="5" width="100%" class="hiddenRow">
+                <div class="accordian-body collapse" id="@i" style="word-wrap: break-word;">
+                    Table No: @Html.DisplayFor(model => model.bookingList.Data[i].tableNo) <br />Request: @Html.DisplayFor(model => model.bookingList.Data[i].request)
+                </div>
+            </td>
+            <td>
+            </td>
+            <td></td>
+        </tr>
+
+
+    }
+</table>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.bookingList.TotalPages; i++)
+        {
+
+            if (Model.bookingList.PageNumber == i)
+            {
+                <li class="page-item active"><a asp-page="ValidateBooking" asp-route-GetPageNumber="@i" asp-route-searchText1="@Request.Query["searchText1"]" asp-route-choice="@Request.Query["choice"]">@i</a></li>
+
+            }
+            else
+            {
+                <li class="page-item"><a asp-page="ValidateBooking" asp-route-GetPageNumber="@i" asp-route-searchText1="@Request.Query["searchText1"]" asp-route-choice="@Request.Query["choice"]">@i</a></li>
+            }
+
+        }
+    </ul>
+}
+
+else if (@ViewData["check"] != null)
+{
+
+}
+else if (ViewData["NotFound"] != null)
+{
+    <div class="text-center panel-body">
+        <label style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    </div>
+}
+else if (Model.PageNumberWarning != null)
+{
+    <label class="text-center" style="font-size:100%;color:blue;">@Model.PageNumberWarning</label>
+}
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function ClickValidate(id) {
+        var ask = window.confirm("Validate this booking?");
+        if (ask) {
+            window.alert("This Booking has been validated.");
+            var searchText = '@Request.Query["searchText1"]';
+            var choice = '@Request.Query["choice"]';
+            var getPageNumber = '@Request.Query["GetPageNumber"]';
+            if (getPageNumber != "") {
+                window.location.href = "/BookingPage/SetConfirmDate?id=" + id + "&searchText1=" + searchText + "&choice=" + choice + "&GetPageNumber=" + getPageNumber;
+            }
+            else {
+                window.location.href = "/BookingPage/SetConfirmDate?id=" + id + "&searchText1=" + searchText + "&choice=" + choice;
+            }
+
+
+
+
+
+
+            //window.location.href = "/BookingPage/SetConfirmDate?id=" + id+"&;
+
+        }
+    }
+</script>
+@section scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<script>
+    $('.accordian-body').on('bs.collapse', function () {
+        $(this).closest("table")
+            .find(".collapse.in")
+            .not(this)
+            .collapse('toggle')
+    })
+</script>
+

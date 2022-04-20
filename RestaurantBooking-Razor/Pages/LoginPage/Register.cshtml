@@ -1,0 +1,58 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.LoginPage.RegisterModel
+@{
+    Layout = "../Shared/RegisterLayout.cshtml";
+}
+
+<h2 class="display-4">Register</h2>
+
+<form method="post" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label asp-for="register.Username"></label>
+        <input class="form-control" asp-for="register.Username" />
+        <span asp-validation-for="register.Username" style="color:red"></span>
+        <label style="color:red">@ViewData["UserExist"]</label>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="register.Email"></label>
+        <input class="form-control" asp-for="register.Email" />
+        <span asp-validation-for="register.Email" style="color:red"></span>
+        <label style="color:red">@ViewData["EmailExist"]</label>
+    </div>
+    <div class="form-group">
+        <label asp-for="register.Password"></label>
+        <input type="password" class="form-control" asp-for="register.Password" />
+        <span asp-validation-for="register.Password" style="color:red"></span>
+    </div>
+    <p>
+        -Minimum 8 characters<br />
+        -Should have at least one number<br />
+        -Should have at least one upper case<br />
+        -Should have at least one lower case<br />
+        -Should have at least one special character<br />
+    </p>
+    <div class="form-group">
+        <label asp-for="register.comparePassword"></label>
+        <input type="password" class="form-control" asp-for="register.comparePassword" />
+        <span asp-validation-for="register.comparePassword" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="register.PhoneNumber"></label>
+        <input class="form-control" asp-for="register.PhoneNumber" />
+        <span asp-validation-for="register.PhoneNumber" style="color:red"></span>
+    </div>
+    <div class="text-center panel-body">
+        <button type="submit" class="btn btn-warning" onclick="window.location.href ='/LoginPage/Login';">Cancel</button>
+        <button type="submit" class="btn btn-primary">Register</button>
+
+    </div>
+</form>
+
+
+@section scripts{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

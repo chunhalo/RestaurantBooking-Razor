@@ -1,0 +1,320 @@
+﻿@page
+@model RestaurantBooking_Razor.Pages.BookingPage.AdminEditBookingModel
+@{
+    Layout = "../Shared/AdminLayout.cshtml";
+}
+
+@{
+    if (Model.booking.bookingId != 0)
+    {
+        <h2>Edit Booking</h2>
+        <form method="post" enctype="multipart/form-data" id="myForm">
+            <input type="hidden" asp-for="booking.bookingId" />
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.bookingId"></label>
+                <input class="form-control" asp-for="booking.bookingId" readonly />
+                <span asp-validation-for="booking.bookingId" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.username"></label>
+                <input class="form-control" asp-for="booking.username" readonly />
+                <span asp-validation-for="booking.username" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label asp-for="booking.res.Name"></label>
+                <input class="form-control" asp-for="booking.res.Name" readonly />
+                <span asp-validation-for="booking.res.Name" style="color:red"></span>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label>Operation Hour</label>
+                @{
+                    var OperationStartdatetime = DateTime.Parse(Model.booking.res.OperationStart);
+                    var OperationEnddatetime = DateTime.Parse(Model.booking.res.OperationEnd);
+                    var getOperationStart = String.Format("{0:hh:mm:tt}", OperationStartdatetime);
+                    var getOperationEnd = String.Format("{0:hh:mm:tt}", OperationEnddatetime);
+                }
+                <input class="form-control" value="@getOperationStart - @getOperationEnd" readonly />
+
+            </div>
+
+            <div class="form-group" style="margin-top:10px">
+                <label>Date:</label>
+                <input type="date" class="form-control" id="date" name="date" />
+                @*<span asp-validation-for="booking.resName" style="color:red"></span>*@
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="booking.startDate"></label>
+                <input type="time" class="form-control" id="starttime" name="starttime" value="@Model.booking.startDate.ToString("HH:mm")" />
+                <span asp-validation-for="booking.startDate" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.endDate"></label>
+                <input type="time" class="form-control" id="endtime" name="endtime" value="@Model.booking.endDate.ToString("HH:mm")" />
+                <span asp-validation-for="booking.endDate" style="color:red"></span>
+            </div>
+            <p><small>The booking between Start and End Time must be at least 1 hour/60 minutes</small></p>
+            <button type="button" id="fetchBtn" class="btn btn-info" onclick="checkAvailability()">Check availability</button>
+            <label id="validation" style="visibility:hidden;"></label>
+            <div class="container" id="container" style="visibility:hidden">
+                <h1>Available List</h1>
+                <div id="list"></div>
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.table.TableNo"></label>
+                <input class="form-control" asp-for="booking.table.TableNo" readonly />
+                <span asp-validation-for="booking.table.TableNo" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.request"></label>
+                <input class="form-control" asp-for="booking.request" readonly only />
+                <span asp-validation-for="booking.request" style="color:red"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="booking.status"></label>
+                @Html.DropDownListFor(model => model.booking.status, new SelectList(Model.bookingStatuses, "Id", "StatusName"), "==Choose a status==", new { @class = "form-control", @disabled = "disabled" })
+                <span asp-validation-for="booking.status" style="color:red"></span>
+            </div>
+            <div class="text-center panel-body">
+                <button type="button" class="btn btn-sm btn-primary" style="width:60px" onclick="window.location.href ='/BookingPage/AdminBooking';">Back</button>
+                <button type="submit" class="btn btn-sm btn-primary" value="Refresh" asp-page-handler="RefreshBooking">Refresh</button>
+            </div>
+
+
+
+        </form>
+        <label class="text-center" style="font-size:100%;color:red;">@Model.MessageKey</label>
+    }
+    else
+    {
+        <label class="text-center" style="font-size:200%;color:blue;">@ViewData["NotFound"]</label>
+    }
+}
+
+@section scripts{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+<script type="text/javascript">
+
+    let container = document.getElementById("container");
+    container.setAttribute("style", "visibility:hidden");
+
+
+
+    var getMonth = parseInt('@Model.booking.startDate.ToString("MM")');
+
+    var getDate = parseInt('@Model.booking.startDate.ToString("dd")');
+    var getYear = parseInt('@Model.booking.startDate.ToString("yyyy")');
+
+
+    var ModelMonthDateYear = new Date();
+    if (getDate < 10) {
+            getDate = '0' + getDate
+    }
+    if (getMonth < 10) {
+            getMonth = '0' + getMonth
+    }
+    ModelMonthDateYear = getYear + '-' + getMonth + '-' + getDate;
+
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1;
+    var mm2 = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+    var hours = today.getHours();
+
+
+
+    if (hours + 1 >= parseInt('@Model.booking.endDate.ToString("HH")')) {
+        dd = dd + 1
+    }
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+            mm = '0' + mm
+    }
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("date").setAttribute("value", ModelMonthDateYear)
+    document.getElementById("date").setAttribute("min", ModelMonthDateYear);
+    mm2 = mm2 + 2;
+    if (mm2 < 10) {
+        mm2 = '0' + mm2
+    }
+    maxDate = yyyy + '-' + mm2 + '-' + dd;
+    document.getElementById("date").setAttribute("max", maxDate);
+</script>
+
+<script type="text/javascript">
+    function checkAvailability() {
+        starttime = $('#starttime').val();
+
+        endtime = $('#endtime').val();
+
+        date = $('#date').val();
+        var getstarttime = starttime.split(":");
+        var starttimehour = getstarttime[0];
+        if (starttimehour == '00') { starttimehour = 24 }
+        var starttimemin = getstarttime[1];
+
+
+        var getendtime = endtime.split(":");
+        var endtimehour = getendtime[0];
+        if (endtimehour == '00') { endtimehour = 24 }
+        var endtimemin = getendtime[1];
+
+        var comparestarttime = starttimehour + "." + starttimemin;
+        var compareendtime = endtimehour + "." + endtimemin;
+        var totalTime = compareendtime - comparestarttime;
+        let validation = document.getElementById("validation");
+        let list = document.getElementById("list");
+
+        if (starttime > '@Model.booking.res.OperationEnd' || starttime <'@Model.booking.res.OperationStart' ) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `start time must be in between @Model.booking.res.OperationStart and @Model.booking.res.OperationEnd`
+            if (endtime > '@Model.booking.res.OperationEnd' || endtime < '@Model.booking.res.OperationStart') {
+                validation.innerHTML+=`<br />end time must be in between @Model.booking.res.OperationStart and @Model.booking.res.OperationEnd`
+            }
+        }
+        else if (endtime > '@Model.booking.res.OperationEnd' || endtime < '@Model.booking.res.OperationStart') {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML =`end time must be in between @Model.booking.res.OperationStart and @Model.booking.res.OperationEnd`
+        }
+        else if (starttime > endtime) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `start time cannot be bigger than end time`
+        }
+        else if ((Math.abs(totalTime)) < 1) {
+            list.innerHTML = ""
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `It must be at least 1 hour`
+        }
+        else {
+
+            validation.setAttribute("style", "visibility: hidden");
+            var xhttp = new XMLHttpRequest();
+
+            var formData = new FormData();
+            xhttp.open("POST","https://localhost:44325/api/Table",true)
+            // xhttp.setRequestHeader("Content-Type", "application/form-data");
+            var starttimewithdate = date + ' ' + starttime;
+            var endtimewithdate = date + ' ' + endtime;
+
+            formData.append("resId", @Model.booking.res.ResId);
+            formData.append("startDate", starttimewithdate);
+            formData.append("endDate", endtimewithdate);
+            xhttp.send(formData);
+
+            xhttp.onreadystatechange = function () {
+                let list = document.getElementById("list");
+                let container = document.getElementById("container");
+                container.setAttribute("style", "visibility:visible");
+
+                list.innerHTML = ""
+                if (this.readyState == 4 && this.status == 200) {
+                    JSON.parse(this.responseText).forEach(function (data, index) {
+
+                        list.innerHTML += `<div class="form-check" id="radiochecked">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="`+ data.tableId + `" value="` + data.tableId + `" />
+                            <label class="form-check-label" style="margin-left:30px" for="data.tableId"> Table `+ data.tableNo + `-` +
+                            data.accommodate + ` people </label></div>`;
+
+
+                    });
+                    if (JSON.parse(this.responseText).length == 0) {
+                        list.innerHTML = "No available table";
+                    } else {
+                        list.innerHTML += `<input type="button" class="btn btn-primary" value="Update" id="@Model.booking.bookingId" onclick="ClickUpdateDateTime(this.id)" />`
+                    }
+                }
+
+            };
+
+
+        }
+
+    }
+
+
+
+    function ClickUpdateDateTime(id) {
+
+        starttime = $('#starttime').val();
+
+        endtime = $('#endtime').val();
+
+        date = $('#date').val();
+        var xhttp = new XMLHttpRequest();
+
+        var formData = new FormData();
+
+        xhttp.open("Put", "https://localhost:44325/api/Booking/UpdateDateTime", true)
+        // xhttp.setRequestHeader("Content-Type", "application/form-data");
+        var starttimewithdate = date + ' ' + starttime;
+        var endtimewithdate = date + ' ' + endtime;
+        var form = document.forms["myForm"];
+        var checkradio = check();
+        if (checkradio == false) {
+            validation.setAttribute("style", "visibility: visible;color:red");
+            validation.innerHTML = `You must select one table to update`
+        }
+        else {
+            tableNo = form.elements["flexRadioDefault"].value;
+            formData.append("bookingId", id);
+            formData.append("startDate", starttimewithdate);
+            formData.append("endDate", endtimewithdate);
+            formData.append("tableId", tableNo)
+            xhttp.send(formData);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+
+                    if (response.checkExist == true) {
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/BookingPage/AdminEditBooking?handler=Update",
+                           
+                            success: function() {
+                               
+                                window.location.href = "/BookingPage/AdminBooking";
+                            }
+                         });
+
+                    }
+                    else {
+                        validation.setAttribute("style", "visibility: visible;color:red");
+                        validation.innerHTML = `This table is selected by other people, please try select other time/table or refresh the page to get latest update`
+                    }
+                    //ViewData["MessageKey"] = "Succesful update the booking";
+
+                }
+
+            };
+        }
+
+
+    }
+
+    function check() {
+        var radios = document.getElementsByName("flexRadioDefault");
+
+        for (var i = 0, len = radios.length; i < len; i++) {
+            if (radios[i].checked) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+</script>
